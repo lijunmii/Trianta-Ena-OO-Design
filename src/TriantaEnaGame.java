@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * Class encapsulates a TriantaEna card game.
+ * Class encapsulates a Trianta Ena card game.
  */
 public class TriantaEnaGame extends Game implements PlayerAction {
     private final int WIN_VAL = 21;
@@ -23,7 +23,7 @@ public class TriantaEnaGame extends Game implements PlayerAction {
     private TriantaEnaDeck deck;
     private TriantaEnaJudge judge;
     private TriantaEnaGameLogger visualizer;
-    private final String[] actions = {"hit", "stand", "doubleUp", "split"};
+    private final String[] actions = {"hit", "stand"};
 
     private int winVal = WIN_VAL;
     private int dealerVal = DEALER_VAL;
@@ -235,12 +235,6 @@ public class TriantaEnaGame extends Game implements PlayerAction {
             case "stand":
                 stand();
                 break;
-            case "doubleUp":
-                doubleUp(deck, player, hand);
-                break;
-            case "split":
-                split(player, hand);
-                break;
         }
     }
 
@@ -322,39 +316,6 @@ public class TriantaEnaGame extends Game implements PlayerAction {
     }
 
     /**
-     * The player could split into two hands, if the two cards in the current hand are of the same rank （10）
-     * Cards must be same value - In most casinos, Tens, Jacks, Queens and Kings all count as ten
-     * and can be considered the same for splitting rules.
-     *
-     * @param player instance of player
-     * @param hand   instance of hand
-     */
-    @Override
-    public void split(TriantaEnaPlayer player, TriantaEnaHand hand) {
-        TriantaEnaCard card = hand.getCardAt(0);
-        TriantaEnaHand newHand = new TriantaEnaHand(card);
-        int handBet = hand.getBet();
-        hand.removeCard(card);
-        player.addHand(newHand);
-        int handCount = player.getHandCount();
-        player.getHandAt(handCount - 1).setBet(handBet);
-        player.setBalance(-handBet);
-    }
-
-    /**
-     * The player double up their bets and immediately followed by a hit and stand
-     *
-     * @param deck instance of deck
-     * @param hand instance of hand
-     */
-    @Override
-    public void doubleUp(TriantaEnaDeck deck, TriantaEnaPlayer player, TriantaEnaHand hand) {
-        player.setBalance(-hand.getBet());
-        hand.setBet(hand.getBet() * 2);
-        hit(deck, hand);
-    }
-
-    /**
      * Player stands means that he/she finish the action of the current hand.
      */
     @Override
@@ -377,12 +338,12 @@ public class TriantaEnaGame extends Game implements PlayerAction {
 
         while (!isValid) {
             input = getInteger(sc.nextLine());
-            if (input >= 1 && input <= player.getBalance()) {
+            if (input >= 0 && input <= player.getBalance()) {
                 isValid = true;
                 player.getHandAt(0).setBet(input);
                 player.setBalance(-input);
             } else {
-                System.out.println("Invalid input. Please enter an integer between 1 and " + player.getBalance() + " as bet: ");
+                System.out.println("Invalid input. Please enter an integer between 0 and " + player.getBalance() + " as bet: ");
             }
         }
     }
