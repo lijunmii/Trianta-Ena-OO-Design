@@ -1,2 +1,2 @@
 # Trianta-Ena-OO-Design
-A variation of traditional Blackjack game
+A variation of the traditional Blackjack game
