@@ -2,8 +2,8 @@
  * Created by Jiatong Hao, Xiankang Wu and Lijun Chen on 9/23/2019.
  */
 
-public class BlackjackFaceCard extends BlackjackCard {
-    public BlackjackFaceCard(String suit, int value) {
+public class TriantaEnaFaceCard extends TriantaEnaCard {
+    public TriantaEnaFaceCard(String suit, int value) {
         super(suit, value);
     }
 

@@ -2,12 +2,12 @@
  * Created by Jiatong Hao, Xiankang Wu and Lijun Chen on 9/23/2019.
  */
 
-public class BlackjackAceCard extends BlackjackCard {
-    public BlackjackAceCard(String suit, int value) {
+public class TriantaEnaAceCard extends TriantaEnaCard {
+    public TriantaEnaAceCard(String suit, int value) {
         super(suit, value);
     }
 
-    public BlackjackAceCard(String suit) {
+    public TriantaEnaAceCard(String suit) {
         super(suit, 1);
     }
 

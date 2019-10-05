@@ -2,7 +2,7 @@
  * Created by Jiatong Hao, Xiankang Wu and Lijun Chen on 9/27/2019.
  */
 
-public class BlackjackGameLogger extends GameLogger {
+public class TriantaEnaGameLogger extends GameLogger {
 
     public void welcomeMsg() {
         System.out.println("Welcome to our game!");
@@ -12,7 +12,7 @@ public class BlackjackGameLogger extends GameLogger {
 
     public void displaySetDefaultParams() {
         System.out.println("Before we start, do you want to change the parameters of the game?");
-        System.out.println("Default dealer stopping value is 17, and default balance for each player is 100.");
+        System.out.println("Default dealer stopping value is 27, and default balance for each player is 100.");
         System.out.println("Enter Y/y to change. All other inputs means using default parameter.");
     }
 
@@ -43,16 +43,16 @@ public class BlackjackGameLogger extends GameLogger {
                 bet + ", Balance = $" + playerBalance );
     }
 
-    public void displayDealerCard(BlackjackCard card) {
+    public void displayDealerCard(TriantaEnaCard card) {
         System.out.println("Dealer's face-up card: " + card);
     }
 
-    public void displayDealerHand(BlackjackHand hand) {
+    public void displayDealerHand(TriantaEnaHand hand) {
         System.out.println("Dealer's current hand is: \n" + hand);
         System.out.println("Dealer's current hand has value: " + hand.getTotalValue() + "\n");
     }
 
-    public void displayPlayerHand(BlackjackHand hand) {
+    public void displayPlayerHand(TriantaEnaHand hand) {
         System.out.println("Your current hand is: " + hand);
         System.out.println("Your current hand has value: " + hand.getTotalValue() + "\n");
     }
@@ -77,7 +77,7 @@ public class BlackjackGameLogger extends GameLogger {
         System.out.println("Player " + playerId + " current balance is $" + playerBalance);
     }
 
-    public void playerLeaves(BlackjackPlayer player) {
+    public void playerLeaves(TriantaEnaPlayer player) {
         System.out.println("Player " + player.getId() + " leaves the game with $" + player.getBalance());
     }
 }

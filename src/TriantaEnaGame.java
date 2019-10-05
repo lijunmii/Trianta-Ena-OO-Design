@@ -7,9 +7,9 @@ import java.util.List;
 import java.util.Scanner;
 
 /**
- * Class encapsulates a Blackjack card game.
+ * Class encapsulates a TriantaEna card game.
  */
-public class BlackjackGame extends Game implements BlackjackAction {
+public class TriantaEnaGame extends Game implements PlayerAction {
     private final int WIN_VAL = 21;
     private final int DEALER_VAL = 17;
     private final int MIN_DEALER_VAL = 16;
@@ -18,11 +18,11 @@ public class BlackjackGame extends Game implements BlackjackAction {
     private final int BALANCE = 100;
     private final int INITIAL_CARD_NUM = 2;
 
-    private List<BlackjackPlayer> playerList;
-    private BlackjackDealer dealer;
-    private BlackjackDeck deck;
-    private BlackjackJudge judge;
-    private BlackjackGameLogger visualizer;
+    private List<TriantaEnaPlayer> playerList;
+    private TriantaEnaDealer dealer;
+    private TriantaEnaDeck deck;
+    private TriantaEnaJudge judge;
+    private TriantaEnaGameLogger visualizer;
     private final String[] actions = {"hit", "stand", "doubleUp", "split"};
 
     private int winVal = WIN_VAL;
@@ -31,8 +31,8 @@ public class BlackjackGame extends Game implements BlackjackAction {
     private int playerCount;
 
 
-    public BlackjackGame() {
-        visualizer = new BlackjackGameLogger();
+    public TriantaEnaGame() {
+        visualizer = new TriantaEnaGameLogger();
         visualizer.welcomeMsg();
         setGameParams();
         setPlayerNumber();
@@ -40,7 +40,7 @@ public class BlackjackGame extends Game implements BlackjackAction {
     }
 
     /**
-     * Entry method of the BlackjackGame.
+     * Entry method of the TriantaEnaGame.
      */
     public void start() {
         System.out.println("\nGame starts!");
@@ -58,18 +58,18 @@ public class BlackjackGame extends Game implements BlackjackAction {
     public void playARound() {
         System.out.println("\n*****************\nRound: " + getRound());
 
-        for (BlackjackPlayer player : playerList) {
+        for (TriantaEnaPlayer player : playerList) {
             makeBet(player);
         }
         dealInitialCards();
         playersPlay();
         dealerPlay();
         calcRoundResult();
-        setRound(getRound()+1);
+        setRound(getRound() + 1);
     }
 
     /**
-     * Initialize game params of BlackJack Game.
+     * Initialize game params of TriantaEna Game.
      */
     private void setGameParams() {
         Scanner sc = new Scanner(System.in);
@@ -123,12 +123,12 @@ public class BlackjackGame extends Game implements BlackjackAction {
 
 
     private void initGame() {
-        deck = new BlackjackDeck();
-        judge = new BlackjackJudge(dealerVal, winVal);
-        dealer = new BlackjackDealer();
+        deck = new TriantaEnaDeck();
+        judge = new TriantaEnaJudge(dealerVal, winVal);
+        dealer = new TriantaEnaDealer();
         playerList = new ArrayList<>(playerCount);
         for (int i = 0; i < playerCount; i++)
-            playerList.add(new BlackjackPlayer(i+1, balance));
+            playerList.add(new TriantaEnaPlayer(i + 1, balance));
     }
 
     /**
@@ -136,11 +136,11 @@ public class BlackjackGame extends Game implements BlackjackAction {
      */
     private void dealInitialCards() {
         for (int idx = 0; idx < this.INITIAL_CARD_NUM; idx++) {
-            for (BlackjackPlayer player : playerList) {
-                BlackjackCard newCard = (BlackjackCard) deck.dealCard();
+            for (TriantaEnaPlayer player : playerList) {
+                TriantaEnaCard newCard = (TriantaEnaCard) deck.dealCard();
                 player.getHandAt(0).addCard(newCard);
             }
-            BlackjackCard newCard = (BlackjackCard) deck.dealCard();
+            TriantaEnaCard newCard = (TriantaEnaCard) deck.dealCard();
             dealer.getHand().addCard(newCard);
         }
     }
@@ -149,20 +149,20 @@ public class BlackjackGame extends Game implements BlackjackAction {
      * The workflow of all players selecting their actions in a single round.
      */
     private void playersPlay() {
-        for (BlackjackPlayer player : playerList) {
+        for (TriantaEnaPlayer player : playerList) {
             System.out.println("\n#################\nPlayer " + player.getId() + " starts!");
             for (int i = 0; i < player.getHandCount(); i++) {
-                BlackjackHand hand = player.getHandAt(i);
+                TriantaEnaHand hand = player.getHandAt(i);
                 visualizer.playHandInfo(player.getId(), player.getBalance(), i, hand.getBet());
                 visualizer.displayDealerCard(dealer.getVisibleCard());
 
-                if (judge.isNaturalBlackjack(hand)) {
+                if (judge.isNaturalTriantaEna(hand)) {
                     visualizer.displayPlayerHand(hand);
-                    System.out.println("Your current hand is a Natural Blackjack! Gorgeous!!!");
+                    System.out.println("Your current hand is a Natural TriantaEna! Gorgeous!!!");
                     continue;
                 }
 
-                while (!judge.isBust(hand) && !judge.isBlackjack(hand)) {
+                while (!judge.isBust(hand) && !judge.isTriantaEna(hand)) {
                     visualizer.displayPlayerHand(hand);
 
                     String next_action = getUserAction(player, hand);
@@ -174,8 +174,8 @@ public class BlackjackGame extends Game implements BlackjackAction {
 
                 visualizer.displayPlayerHand(hand);
 
-                if (judge.isBlackjack(hand)) {
-                    System.out.println("Your current hand is a Blackjack! Congrats!");
+                if (judge.isTriantaEna(hand)) {
+                    System.out.println("Your current hand is a TriantaEna! Congrats!");
                 }
                 if (judge.isBust(hand)) {
                     int displayedIdx = i + 1;
@@ -197,11 +197,12 @@ public class BlackjackGame extends Game implements BlackjackAction {
 
     /**
      * Ask the player to select the next action, and decide if it is valid.
+     *
      * @param player current player.
-     * @param hand current hand the player is dealing with.
+     * @param hand   current hand the player is dealing with.
      * @return string of the action.
      */
-    private String getUserAction(BlackjackPlayer player, BlackjackHand hand) {
+    private String getUserAction(TriantaEnaPlayer player, TriantaEnaHand hand) {
         Scanner sc = new Scanner(System.in);
         boolean isValid = false;
         int input = -1;
@@ -209,7 +210,7 @@ public class BlackjackGame extends Game implements BlackjackAction {
             visualizer.displayActionChoices(actions);
             // if input is valid, change isValid = true
             input = getInteger(sc.nextLine());
-            if (1 <= input && input <= actions.length && judge.isActionValid(player, hand, actions[input-1])) {
+            if (1 <= input && input <= actions.length && judge.isActionValid(player, hand, actions[input - 1])) {
                 System.out.println("Your action: " + actions[input - 1]);
                 isValid = true;
             } else {
@@ -221,11 +222,12 @@ public class BlackjackGame extends Game implements BlackjackAction {
 
     /**
      * Execute the action selected by a single player with factory design pattern.
+     *
      * @param player current player.
      * @param action current action selected by the player.
-     * @param hand current hand the player is dealing with.
+     * @param hand   current hand the player is dealing with.
      */
-    private void playAction(BlackjackPlayer player, String action, BlackjackHand hand) {
+    private void playAction(TriantaEnaPlayer player, String action, TriantaEnaHand hand) {
         switch (action) {
             case "hit":
                 hit(deck, hand);
@@ -248,12 +250,12 @@ public class BlackjackGame extends Game implements BlackjackAction {
     private void dealerPlay() {
         System.out.println("\n#################\nDealer starts!");
 
-        BlackjackHand dealerHand = dealer.getHand();
+        TriantaEnaHand dealerHand = dealer.getHand();
 
         visualizer.displayDealerHand(dealerHand);
 
-        if (judge.isNaturalBlackjack(dealerHand)) {
-            System.out.println("Dealer's current hand is a Natural Blackjack! Gorgeous!!!");
+        if (judge.isNaturalTriantaEna(dealerHand)) {
+            System.out.println("Dealer's current hand is a Natural TriantaEna! Gorgeous!!!");
         }
 
         while (judge.canDealerHit(dealer)) {
@@ -262,8 +264,8 @@ public class BlackjackGame extends Game implements BlackjackAction {
             visualizer.displayDealerHand(dealerHand);
         }
 
-        if (judge.isBlackjack(dealerHand)) {
-            System.out.println("Your current hand is a Blackjack! Congrats!");
+        if (judge.isTriantaEna(dealerHand)) {
+            System.out.println("Your current hand is a TriantaEna! Congrats!");
         }
 
         if (judge.isBust(dealerHand)) {
@@ -278,20 +280,19 @@ public class BlackjackGame extends Game implements BlackjackAction {
      * Remove players with $0 balance, and ask other players if they would like to cash out or join the next round.
      */
     private void calcRoundResult() {
-        List<BlackjackPlayer> toRemove = new ArrayList<>();
-        for (BlackjackPlayer player : playerList) {
+        List<TriantaEnaPlayer> toRemove = new ArrayList<>();
+        for (TriantaEnaPlayer player : playerList) {
             int roundBalance = judge.checkWinner(player, dealer);
             visualizer.printPlayerBalance(player.getId(), roundBalance, player.getBalance(), getRound());
             if (player.getBalance() == 0) {
                 visualizer.playerLeaves(player);
                 toRemove.add(player);
-            }
-            else if (cashOut(player)) {
+            } else if (cashOut(player)) {
                 visualizer.playerLeaves(player);
                 toRemove.add(player);
             }
         }
-        for (BlackjackPlayer player: toRemove) {
+        for (TriantaEnaPlayer player : toRemove) {
             playerList.remove(player);
         }
     }
@@ -301,21 +302,22 @@ public class BlackjackGame extends Game implements BlackjackAction {
      */
     private void resetHands() {
         dealer.clearHands();
-        dealer.addHand(new BlackjackHand());
-        for (BlackjackPlayer player : playerList) {
+        dealer.addHand(new TriantaEnaHand());
+        for (TriantaEnaPlayer player : playerList) {
             player.clearHands();
-            player.addHand(new BlackjackHand());
+            player.addHand(new TriantaEnaHand());
         }
     }
 
     /**
      * Deals one card
+     *
      * @param deck instance of deck
      * @param hand instance of hand
      */
     @Override
-    public void hit(BlackjackDeck deck, BlackjackHand hand) {
-        BlackjackCard newCard = (BlackjackCard) deck.dealCard();
+    public void hit(TriantaEnaDeck deck, TriantaEnaHand hand) {
+        TriantaEnaCard newCard = (TriantaEnaCard) deck.dealCard();
         hand.addCard(newCard);
     }
 
@@ -323,13 +325,14 @@ public class BlackjackGame extends Game implements BlackjackAction {
      * The player could split into two hands, if the two cards in the current hand are of the same rank （10）
      * Cards must be same value - In most casinos, Tens, Jacks, Queens and Kings all count as ten
      * and can be considered the same for splitting rules.
+     *
      * @param player instance of player
-     * @param hand instance of hand
+     * @param hand   instance of hand
      */
     @Override
-    public void split(BlackjackPlayer player, BlackjackHand hand) {
-        BlackjackCard card = hand.getCardAt(0);
-        BlackjackHand newHand = new BlackjackHand(card);
+    public void split(TriantaEnaPlayer player, TriantaEnaHand hand) {
+        TriantaEnaCard card = hand.getCardAt(0);
+        TriantaEnaHand newHand = new TriantaEnaHand(card);
         int handBet = hand.getBet();
         hand.removeCard(card);
         player.addHand(newHand);
@@ -340,11 +343,12 @@ public class BlackjackGame extends Game implements BlackjackAction {
 
     /**
      * The player double up their bets and immediately followed by a hit and stand
+     *
      * @param deck instance of deck
      * @param hand instance of hand
      */
     @Override
-    public void doubleUp(BlackjackDeck deck, BlackjackPlayer player, BlackjackHand hand) {
+    public void doubleUp(TriantaEnaDeck deck, TriantaEnaPlayer player, TriantaEnaHand hand) {
         player.setBalance(-hand.getBet());
         hand.setBet(hand.getBet() * 2);
         hit(deck, hand);
@@ -360,10 +364,11 @@ public class BlackjackGame extends Game implements BlackjackAction {
 
     /**
      * Ask player to make initial bet
+     *
      * @param player - a player instance
      */
     @Override
-    public void makeBet(BlackjackPlayer player) {
+    public void makeBet(TriantaEnaPlayer player) {
         Scanner sc = new Scanner(System.in);
         int input;
         boolean isValid = false;
@@ -384,11 +389,12 @@ public class BlackjackGame extends Game implements BlackjackAction {
 
     /**
      * Ask the player if he/she would like to cash out.
+     *
      * @param player - a player instance
      * @return true if player cash out, false otherwise
      */
     @Override
-    public boolean cashOut(BlackjackPlayer player) {
+    public boolean cashOut(TriantaEnaPlayer player) {
 
         Scanner scanner = new Scanner(System.in);
         boolean isCashOut = false;

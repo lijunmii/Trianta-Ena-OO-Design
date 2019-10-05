@@ -5,21 +5,21 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class BlackjackDeck extends Deck {
+public class TriantaEnaDeck extends Deck {
 
     /**
      * Initialize the deck with cards.
      */
     public void createDeck() {
-        List<BlackjackCard> cards = new ArrayList<BlackjackCard>();
+        List<TriantaEnaCard> cards = new ArrayList<TriantaEnaCard>();
         String[] suits = new String[]{"Spade", "Heart", "Club", "Diamond"};
         for (String suit : suits) {
-            cards.add(new BlackjackAceCard(suit));
+            cards.add(new TriantaEnaAceCard(suit));
             for (int i = 2; i <= 10; i++) {
-                cards.add(new BlackjackCard(suit, i));
+                cards.add(new TriantaEnaCard(suit, i));
             }
             for (int i = 11; i <= 13; i++) {
-                cards.add(new BlackjackFaceCard(suit, i));
+                cards.add(new TriantaEnaFaceCard(suit, i));
             }
         }
         setCards(cards);

@@ -2,11 +2,11 @@
  * Created by Jiatong Hao, Xiankang Wu and Lijun Chen on 9/23/2019.
  */
 
-public class BlackjackDealer extends Player {
+public class TriantaEnaDealer extends Player {
 
-    BlackjackDealer() {
+    TriantaEnaDealer() {
         super();
-        addHand(new BlackjackHand());
+        addHand(new TriantaEnaHand());
     }
 
     /**
@@ -15,15 +15,15 @@ public class BlackjackDealer extends Player {
      *
      * @return the card that is face-down.
      */
-    public BlackjackCard getVisibleCard() {
-        return ((BlackjackHand)getHands().get(0)).getCardAt(1);
+    public TriantaEnaCard getVisibleCard() {
+        return ((TriantaEnaHand)getHands().get(0)).getCardAt(1);
     }
 
     /**
      * Get the first hand within hands.
      * @return a hand instance
      */
-    public BlackjackHand getHand() {
-        return (BlackjackHand) getHands().get(0);
+    public TriantaEnaHand getHand() {
+        return (TriantaEnaHand) getHands().get(0);
     }
 }

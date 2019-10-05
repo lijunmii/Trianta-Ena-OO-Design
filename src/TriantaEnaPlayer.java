@@ -2,7 +2,7 @@
  * Created by Jiatong Hao, Xiankang Wu and Lijun Chen on 9/23/2019.
  */
 
-public class BlackjackPlayer extends Player {
+public class TriantaEnaPlayer extends Player {
 
     private int balance;
 
@@ -11,10 +11,10 @@ public class BlackjackPlayer extends Player {
      * @param id player id.
      * @param balance Initial balance for the player.
      */
-    public BlackjackPlayer(int id, int balance) {
+    public TriantaEnaPlayer(int id, int balance) {
         super(id);
         this.balance = balance;
-        addHand(new BlackjackHand());
+        addHand(new TriantaEnaHand());
     }
 
     /**
@@ -44,9 +44,9 @@ public class BlackjackPlayer extends Player {
     /**
      * Get the hand.
      * @param idx index of the hand.
-     * @return an instance of BlackjackHand.
+     * @return an instance of TriantaEnaHand.
      */
-    public BlackjackHand getHandAt(int idx) {
-        return (BlackjackHand) getHands().get(idx);
+    public TriantaEnaHand getHandAt(int idx) {
+        return (TriantaEnaHand) getHands().get(idx);
     }
 }

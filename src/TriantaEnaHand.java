@@ -2,15 +2,15 @@
  * Created by Jiatong Hao, Xiankang Wu and Lijun Chen on 9/27/2019.
  */
 
-public class BlackjackHand extends Hand<BlackjackCard> {
+public class TriantaEnaHand extends Hand<TriantaEnaCard> {
 
     private int bet;
 
-    public BlackjackHand() {
+    public TriantaEnaHand() {
         super();
     }
 
-    public BlackjackHand(BlackjackCard card) {
+    public TriantaEnaHand(TriantaEnaCard card) {
         super(card);
     }
 
@@ -33,7 +33,7 @@ public class BlackjackHand extends Hand<BlackjackCard> {
 
         for (int i = 0; i < cardCount; i++) {
             // Add the value of each card in the hand
-            BlackjackCard card = (BlackjackCard) getCardAt(i);
+            TriantaEnaCard card = (TriantaEnaCard) getCardAt(i);
             int cardSoftValue = card.getSoftValue();
             value += cardSoftValue;
 
@@ -51,3 +51,4 @@ public class BlackjackHand extends Hand<BlackjackCard> {
         return value;
     }
 }
+
