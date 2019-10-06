@@ -2,8 +2,6 @@
  * Created by Jiatong Hao, Xiankang Wu and Lijun Chen on 9/27/2019.
  */
 
-import java.util.List;
-
 public class TriantaEnaJudge extends Judge<TriantaEnaPlayer, TriantaEnaPlayer> {
 
     private int bankerValue;
