@@ -17,7 +17,7 @@ public class TriantaEnaGame extends Game implements PlayerAction {
     private final int BANKER_VAL = 27;
     private final int MIN_BANKER_VAL = 16;
     private final int MAX_BANKER_VAL = 18;
-    private final int MAX_PLAYER = 4;
+    private final int MAX_PLAYER = 7;
     private final int BALANCE = 100;
     private final int INITIAL_CARD_NUM = 3;
 
@@ -60,10 +60,22 @@ public class TriantaEnaGame extends Game implements PlayerAction {
     public void playARound() {
         logger.msg("\n*****************\nRound: " + getRound());
 
+        // deal one initial card for all player and banker
         for (TriantaEnaPlayer player : playerList) {
+            TriantaEnaHand hand = player.getHand();
+            TriantaEnaCard newCard = (TriantaEnaCard) deck.dealCard();
+            hand.addCard(newCard);
+        }
+        TriantaEnaCard newCard = (TriantaEnaCard) deck.dealCard();
+        banker.getHand().addCard(newCard);
+
+        // ask player to make bet or fold
+        for (TriantaEnaPlayer player : playerList) {
+            logger.displayPlayerHand(player.getHand());
             makeBet(player);
         }
-        dealInitialCards();
+
+        dealCards(INITIAL_CARD_NUM - 1);
         playersPlay();
         bankerPlay();
         calcRoundResult();
@@ -137,20 +149,11 @@ public class TriantaEnaGame extends Game implements PlayerAction {
     /**
      * Initialize two cards to both players and bankers in alternating sequence.
      */
-    private void dealInitialCards() {
-        for (int idx = 0; idx < this.INITIAL_CARD_NUM; idx++) {
+    private void dealCards(int cardNum) {
+        for (int idx = 0; idx < cardNum; idx++) {
             for (TriantaEnaPlayer player : playerList) {
+                if (judge.isFold(player.getHand())) continue;
                 TriantaEnaHand hand = player.getHand();
-                // Current player chooses to fold. Only players with a standing bet get two more cards.
-                if (hand.getBet() == 0 && hand.getCardCount() == 0) {
-                    TriantaEnaCard newCard = (TriantaEnaCard) deck.dealCard();
-                    hand.addCard(newCard);
-                    System.out.print("1 - Card add!");
-                    continue;
-                } else if (hand.getBet() == 0 && hand.getCardCount() != 0) {
-                    continue;
-                }
-                System.out.print("Card add!");
                 TriantaEnaCard newCard = (TriantaEnaCard) deck.dealCard();
                 hand.addCard(newCard);
             }
@@ -166,7 +169,9 @@ public class TriantaEnaGame extends Game implements PlayerAction {
         for (TriantaEnaPlayer player : playerList) {
             logger.msg("\n#################\nPlayer " + player.getId() + " starts!");
             for (int i = 0; i < player.getHandCount(); i++) {
+
                 TriantaEnaHand hand = player.getHandAt(i);
+
                 if (judge.isFold(hand)) {
                     logger.msg("Player " + player.getId() + " has folded.");
                     logger.displayPlayerHand(hand);
@@ -299,8 +304,10 @@ public class TriantaEnaGame extends Game implements PlayerAction {
         List<TriantaEnaPlayer> toRemove = new ArrayList<>();
         logger.printBankerBalance(banker.getId(), banker.getBalance(), getRound());
         for (TriantaEnaPlayer player : playerList) {
-            int roundBalance = judge.checkWinner(player, banker);
-            logger.printPlayerBalance(player.getId(), roundBalance, player.getBalance(), getRound());
+            if (!judge.isFold(player.getHand())) {
+                int roundBalance = judge.checkWinner(player, banker);
+                logger.printPlayerBalance(player.getId(), roundBalance, player.getBalance(), getRound());
+            }
             if (player.getBalance() == 0) {
                 logger.playerLeaves(player);
                 toRemove.add(player);

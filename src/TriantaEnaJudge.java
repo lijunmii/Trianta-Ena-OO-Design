@@ -50,10 +50,6 @@ public class TriantaEnaJudge extends Judge<TriantaEnaPlayer, TriantaEnaPlayer> {
         switch (action) {
             case "hit":
                 return !isBust(hand);
-            case "split":
-                return isSplittable(player, hand);
-            case "doubleUp":
-                return isEnoughBalance(player, hand.getBet());
         }
         return true;
     }
@@ -173,30 +169,27 @@ public class TriantaEnaJudge extends Judge<TriantaEnaPlayer, TriantaEnaPlayer> {
                     roundBalance -= bet;
                     banker.setBalance(bet);
                 } else {
-                    // if player folds
-                    if (value == 0) {
-                        roundBalance = 0;
-                    }  else if (value < bankerValue) { // if player hand not bust
+                    if (value < bankerValue) { // if player hand not bust
                         // if player hand value < banker hand value, player hand loses
-                        banker.setBalance(bet);
                         roundBalance -= bet;
+                        banker.setBalance(bet);
                     } else if (value == bankerValue) {
                         if (isNaturalTriantaEna(bankerHand) && isNaturalTriantaEna(playerHand)) {
-                            // both banker hand & player hand is natural blackjack, tie
+                            // both banker hand & player hand is natural Trianta Ena, tie
                             // if tie, player loses
                             banker.setBalance(bet);
                             roundBalance -= bet;
                         } else if (isNaturalTriantaEna(bankerHand) && !isTriantaEna(playerHand)) {
-                            // banker hand == natural blackjack && player hand == blackjack, player hand loses
+                            // banker hand == natural Trianta Ena && player hand == Trianta Ena, player hand loses
                             banker.setBalance(bet);
                             roundBalance -= bet;
                         } else if (isTriantaEna(bankerHand) && isNaturalTriantaEna(playerHand)) {
-                            // banker hand == blackjack && player hand == natural blackjack, player hand wins
+                            // banker hand == Trianta Ena && player hand == natural Trianta Ena, player hand wins
                             // If the Player wins, they keep their bet and receive their bet * 2 from the Banker
                             player.setBalance(bet * 2);
                             roundBalance += bet;
                         } else {
-                            // both blackjack or neither blackjack, nor natural blackjack, tie
+                            // both Trianta Ena or neither Trianta Ena, nor natural Trianta Ena, tie
                             // if tie, player loses
                             banker.setBalance(bet);
                             roundBalance -= bet;
