@@ -5,6 +5,8 @@
 public class TriantaEnaHand extends Hand<TriantaEnaCard> {
 
     private int bet;
+    private int winValue = 31;
+    private int hardValue = 10;
 
     public TriantaEnaHand() {
         super();
@@ -24,6 +26,7 @@ public class TriantaEnaHand extends Hand<TriantaEnaCard> {
 
     /**
      * Compute the total value of cards within the current hand.
+     *
      * @return total value of cards within the current hand.
      */
     public int getTotalValue() {
@@ -37,14 +40,26 @@ public class TriantaEnaHand extends Hand<TriantaEnaCard> {
             int cardSoftValue = card.getSoftValue();
             value += cardSoftValue;
 
-            if (card.getHardValue() == 11) {
+            if (card.getHardValue() == hardValue + 1) {
                 aceCount += 1;
             }
         }
 
-        // If a hand has Ace cards, use its hard value as long as the hand is not busted
-        while (aceCount > 0 && value + 10 <= 21) {
-            value += 10;
+        // If there is only one aceCard, pick a hard value or soft value.
+        if (aceCount == 1) {
+            if (value + hardValue <= winValue) {
+                value += hardValue;
+            } else if (value + hardValue > winValue && value + 1 <= winValue) {
+                value += 1;
+            } else {
+                value += hardValue;
+            }
+        }
+
+        // If a hand has more than one Ace cards, use the hard value as long as the hand is not busted
+//      while (aceCount > 1 && value + hardValue <= winValue) {
+        while (aceCount > 1) {
+            value += hardValue;
             aceCount -= 1;
         }
 

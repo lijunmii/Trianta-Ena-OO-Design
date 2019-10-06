@@ -5,79 +5,83 @@
 public class TriantaEnaGameLogger extends GameLogger {
 
     public void welcomeMsg() {
-        System.out.println("Welcome to our game!");
-        System.out.println("Created by Jiatong Hao, Xiankang Wu and Lijun Chen on 9/23/2019.");
-        System.out.println("########\n");
+        msg("Welcome to our game!");
+        msg("Created by Jiatong Hao, Xiankang Wu and Lijun Chen on 10/05/2019.");
+        msg("########\n");
     }
 
     public void displaySetDefaultParams() {
-        System.out.println("Before we start, do you want to change the parameters of the game?");
-        System.out.println("Default dealer stopping value is 27, and default balance for each player is 100.");
-        System.out.println("Enter Y/y to change. All other inputs means using default parameter.");
+        msg("Before we start, do you want to change the parameters of the game?");
+        msg("Default banker stopping value is 27, and default balance for each player is 100.");
+        msg("Enter Y/y to change. All other inputs means using default parameter.");
     }
 
-    public void displaySetDealerParam() {
-        System.out.println("Please enter a number between 16 and 18 as dealer's stopping value. ");
-        System.out.println("All other inputs means using default parameter.");
+    public void displaySetBankerParam() {
+        msg("Please enter a number between 24 and 31 as banker's stopping value. ");
+        msg("All other inputs means using default parameter.");
     }
 
     public void displaySetBalanceParam() {
-        System.out.println("Pleae enter a number larger than 1 as balance for each player.");
-        System.out.println("All other inputs means using default parameter.");
+        msg("Pleae enter a number larger than 1 as balance for each player.");
+        msg("All other inputs means using default parameter.");
     }
 
     public void displaySetPlayerCountInfo(int max_player) {
-        System.out.println("Please tell us how many players will join the game.");
-        System.out.println("We do not allow new players to join after the game starts.");
-        System.out.println("The max number of players allowed is " + max_player + ".");
-        System.out.println("Please enter an integer between 1 and " + max_player + ": ");
+        msg("Please tell us how many players will join the game.");
+        msg("We do not allow new players to join after the game starts.");
+        msg("The max number of players allowed is " + max_player + ".");
+        msg("Please enter an integer between 1 and " + max_player + ": ");
     }
 
     public void displayInvalidMsgForRange(int min_number, int max_number) {
-        System.out.println("Invalid input. Please enter a number between " + min_number + " and " + max_number + ": ");
+        msg("Invalid input. Please enter a number between " + min_number + " and " + max_number + ": ");
     }
 
     public void playHandInfo(int playerId, int playerBalance, int handIdx, int bet) {
         int displayedHandIdx = handIdx + 1;
-        System.out.println("Player " + playerId + ", Hand no." + displayedHandIdx + ", Bet for this hand = $" +
+        msg("Player " + playerId + ", Hand no." + displayedHandIdx + ", Bet for this hand = $" +
                 bet + ", Balance = $" + playerBalance );
     }
 
-    public void displayDealerCard(TriantaEnaCard card) {
-        System.out.println("Dealer's face-up card: " + card);
+    public void displayBankerCard(TriantaEnaCard card) {
+        msg("Banker's face-up card: " + card);
     }
 
-    public void displayDealerHand(TriantaEnaHand hand) {
-        System.out.println("Dealer's current hand is: \n" + hand);
-        System.out.println("Dealer's current hand has value: " + hand.getTotalValue() + "\n");
+    public void displayBankerHand(TriantaEnaHand hand) {
+        msg("Banker's current hand is: \n" + hand);
+        msg("Banker's current hand has value: " + hand.getTotalValue() + "\n");
     }
 
     public void displayPlayerHand(TriantaEnaHand hand) {
-        System.out.println("Your current hand is: " + hand);
-        System.out.println("Your current hand has value: " + hand.getTotalValue() + "\n");
+        msg("Your current hand is: " + hand);
+        msg("Your current hand has value: " + hand.getTotalValue() + "\n");
     }
 
 
     public void displayActionChoices(String[] actions) {
-        System.out.println("Please select your next action with its corresponding number (e.g., 1 to hit):");
+        msg("Please select your next action with its corresponding number (e.g., 1 to hit):");
         int idx = 1;
         for (String action : actions) {
             System.out.print(action + ": " + idx++ + "\t");
         }
-        System.out.println();
+        msg("\n");
     }
 
     public void printPlayerBalance(int playerId, int roundBalance, int playerBalance, int roundNum) {
         if (roundBalance > 0)
-            System.out.println("At round " + roundNum + ", Player " + playerId + " wins $" + roundBalance + ".");
+            msg("At round " + roundNum + ", Player " + playerId + " wins $" + roundBalance + ".");
         else if (roundBalance == 0)
-            System.out.println("At round " + roundNum + ", Player " + playerId + " is tie.");
+            msg("At round " + roundNum + ", Player " + playerId + " is tie.");
         else
-            System.out.println("At round " + roundNum + ", Player " + playerId + " loses $" + -roundBalance + ".");
-        System.out.println("Player " + playerId + " current balance is $" + playerBalance);
+            msg("At round " + roundNum + ", Player " + playerId + " loses $" + -roundBalance + ".");
+        msg("Player " + playerId + " current balance is $" + playerBalance);
+    }
+
+    public void printBankerBalance(int playerId, int roundBalance, int roundNum) {
+            msg("At round " + roundNum + ", Banker " + playerId + " has balance $" + roundBalance + ".");
     }
 
     public void playerLeaves(TriantaEnaPlayer player) {
-        System.out.println("Player " + player.getId() + " leaves the game with $" + player.getBalance());
+        msg("Player " + player.getId() + " leaves the game with $" + player.getBalance());
     }
 }
