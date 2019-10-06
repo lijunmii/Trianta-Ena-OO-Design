@@ -32,8 +32,6 @@ public class TriantaEnaGame extends Game implements PlayerAction {
     private int bankerVal = BANKER_VAL;
     private int balance = BALANCE;
     private int playerCount;
-//    private int bankerID;
-
 
     public TriantaEnaGame() {
         logger = new TriantaEnaGameLogger();
@@ -344,8 +342,7 @@ public class TriantaEnaGame extends Game implements PlayerAction {
             String choice = sc.nextLine();
             if (!choice.equals("y") && !choice.equals("Y")) {
                 logger.msg("Player " + playerID + "did not become the Banker.\n");
-            }
-            else {
+            } else {
                 logger.msg("Player " + playerID + " is now the new Banker!\n");
                 logger.msg("Banker " + banker.getId() + " now is Player " + banker.getId() + "!\n");
                 playerList.add(banker);
