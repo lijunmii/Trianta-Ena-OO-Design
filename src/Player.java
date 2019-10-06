@@ -1,5 +1,5 @@
 /**
- * Created by Jiatong Hao, Xiankang Wu and Lijun Chen on 9/23/2019.
+ * Created by Jiatong Hao, Xiankang Wu and Lijun Chen on 10/05/2019.
  */
 
 import java.util.ArrayList;
@@ -22,6 +22,10 @@ public class Player<E extends Hand> {
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public List<E> getHands() {

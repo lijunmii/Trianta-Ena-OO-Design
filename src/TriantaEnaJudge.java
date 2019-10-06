@@ -2,29 +2,32 @@
  * Created by Jiatong Hao, Xiankang Wu and Lijun Chen on 9/27/2019.
  */
 
-public class TriantaEnaJudge extends Judge<TriantaEnaPlayer, TriantaEnaDealer> {
+import java.util.List;
 
-    private int dealerValue;
+public class TriantaEnaJudge extends Judge<TriantaEnaPlayer, TriantaEnaPlayer> {
 
+    private int bankerValue;
     private int winValue;
+    private int INITIAL_CARD_NUM = 3;
+    private int FACE_CARD_MIN_VALUE = 11;
 
     /**
      * Constructor.
      *
-     * @param dealerValue value that the dealer will stop hitting when his/her hand reaches. In default it is 17.
+     * @param bankerValue value that the banker will stop hitting when his/her hand reaches. In default it is 17.
      * @param winValue    value that the Blackjack refers to. In default it is 21.
      */
-    public TriantaEnaJudge(int dealerValue, int winValue) {
-        this.dealerValue = dealerValue;
+    public TriantaEnaJudge(int bankerValue, int winValue) {
+        this.bankerValue = bankerValue;
         this.winValue = winValue;
     }
 
-    public int getDealerValue() {
-        return dealerValue;
+    public int getBankerValue() {
+        return bankerValue;
     }
 
-    public void setDealerValue(int dealerValue) {
-        this.dealerValue = dealerValue;
+    public void setBankerValue(int bankerValue) {
+        this.bankerValue = bankerValue;
     }
 
     public int getWinValue() {
@@ -65,6 +68,17 @@ public class TriantaEnaJudge extends Judge<TriantaEnaPlayer, TriantaEnaDealer> {
         return hand.getTotalValue() > this.winValue;
     }
 
+
+    /**
+     * Tells if the current hand is fold.
+     *
+     * @param hand the hand instance.
+     * @return True if fold, false otherwise.
+     */
+    public boolean isFold(TriantaEnaHand hand) {
+        return hand.getBet() == 0;
+    }
+
     private boolean isEnoughBalance(TriantaEnaPlayer player, int bet) {
         return player.getBalance() - bet >= 0;
     }
@@ -79,13 +93,13 @@ public class TriantaEnaJudge extends Judge<TriantaEnaPlayer, TriantaEnaDealer> {
     }
 
     /**
-     * Tells if the dealer can still hit.
+     * Tells if the banker can still hit.
      *
-     * @param dealer dealer instance.
-     * @return True if the dealer can hit, false otherwise.
+     * @param banker banker instance.
+     * @return True if the banker can hit, false otherwise.
      */
-    public boolean canDealerHit(TriantaEnaDealer dealer) {
-        return dealer.getHand().getTotalValue() < dealerValue;
+    public boolean canBankerHit(TriantaEnaPlayer banker) {
+        return banker.getHand().getTotalValue() < bankerValue;
     }
 
     /**
@@ -105,24 +119,35 @@ public class TriantaEnaJudge extends Judge<TriantaEnaPlayer, TriantaEnaDealer> {
      * @return if the current hand is natural Blackjack.
      */
     public boolean isNaturalTriantaEna(TriantaEnaHand hand) {
-        return isTriantaEna(hand) && hand.getCardCount() == 2;
+        if (hand.getCardCount() != INITIAL_CARD_NUM)
+            return false;
+        int aceCardCount = 0;
+        int faceCardCount = 0;
+        for (TriantaEnaCard card : hand.getHand()) {
+            if (card.getValue() == 1) {
+                aceCardCount++;
+            } else if (card.getValue() >= FACE_CARD_MIN_VALUE) {
+                faceCardCount++;
+            }
+        }
+        return aceCardCount == 1 && faceCardCount == 2;
     }
 
     /**
-     * Compaer each hand of the player and the one of the dealer.
+     * Compaer each hand of the player and the one of the banker.
      *
      * @param player instance of player.
-     * @param dealer instance of dealer.
+     * @param banker instance of banker.
      * @return Balance that the current player wins or loses. If wins or tie, it is positive, otherwise it is negative.
      */
-    public int checkWinner(TriantaEnaPlayer player, TriantaEnaDealer dealer) {
-        TriantaEnaHand dealerHand = dealer.getHand();
-        int dealerValue = dealerHand.getTotalValue();
+    public int checkWinner(TriantaEnaPlayer player, TriantaEnaPlayer banker) {
+        TriantaEnaHand bankerHand = banker.getHand();
+        int bankerValue = bankerHand.getTotalValue();
 
         int roundBalance = 0;
 
-        if (isBust(dealerHand)) {
-            // if dealer is bust
+        if (isBust(bankerHand)) {
+            // if banker is bust
             for (int i = 0; i < player.getHandCount(); i++) {
                 TriantaEnaHand playerHand = player.getHandAt(i);
                 int bet = playerHand.getBet();
@@ -132,42 +157,55 @@ public class TriantaEnaJudge extends Judge<TriantaEnaPlayer, TriantaEnaDealer> {
                     player.setBalance(bet * 2);
                     roundBalance += playerHand.getBet();
                 } else {
-                    // if this player hand bust, both player and dealer lose, tie
-                    player.setBalance(bet);
+                    // if this player hand bust, both player and banker lose, tie
+                    // if tie, player loses, and banker get the bet
+                    roundBalance -= playerHand.getBet();
+                    banker.setBalance(bet);
                 }
             }
         } else {
-            // if dealer does not bust
+            // if banker does not bust
             for (int i = 0; i < player.getHandCount(); i++) {
                 TriantaEnaHand playerHand = player.getHandAt(i);
                 int value = playerHand.getTotalValue();
                 int bet = playerHand.getBet();
 
                 if (isBust(playerHand)) {
-                    // if player hand bust, player hand loses
+                    // if player hand bust, player hand loses, and banker get the bet
                     roundBalance -= bet;
+                    banker.setBalance(bet);
                 } else {
-                    // if player hand not bust
-                    if (value < dealerValue) {
-                        // if player hand value < dealer hand value, player hand loses
+                    // if player folds
+                    if (value == 0) {
+                        roundBalance = 0;
+                    }  else if (value < bankerValue) { // if player hand not bust
+                        // if player hand value < banker hand value, player hand loses
+                        banker.setBalance(bet);
                         roundBalance -= bet;
-                    } else if (value == dealerValue) {
-                        if (isNaturalTriantaEna(dealerHand) && isNaturalTriantaEna(playerHand)) {
-                            // both dealer hand & player hand is natural blackjack, tie
-                            player.setBalance(bet);
-                        } else if (isNaturalTriantaEna(dealerHand) && !isTriantaEna(playerHand)) {
-                            // dealer hand == natural blackjack && player hand == blackjack, player hand loses
+                    } else if (value == bankerValue) {
+                        if (isNaturalTriantaEna(bankerHand) && isNaturalTriantaEna(playerHand)) {
+                            // both banker hand & player hand is natural blackjack, tie
+                            // if tie, player loses
+                            banker.setBalance(bet);
                             roundBalance -= bet;
-                        } else if (isTriantaEna(dealerHand) && isNaturalTriantaEna(playerHand)) {
-                            // dealer hand == blackjack && player hand == natural blackjack, player hand wins
+                        } else if (isNaturalTriantaEna(bankerHand) && !isTriantaEna(playerHand)) {
+                            // banker hand == natural blackjack && player hand == blackjack, player hand loses
+                            banker.setBalance(bet);
+                            roundBalance -= bet;
+                        } else if (isTriantaEna(bankerHand) && isNaturalTriantaEna(playerHand)) {
+                            // banker hand == blackjack && player hand == natural blackjack, player hand wins
+                            // If the Player wins, they keep their bet and receive their bet * 2 from the Banker
                             player.setBalance(bet * 2);
+                            banker.setBalance(-bet);
                             roundBalance += bet;
                         } else {
                             // both blackjack or neither blackjack, nor natural blackjack, tie
-                            player.setBalance(bet);
+                            // if tie, player loses
+                            banker.setBalance(bet);
+                            roundBalance -= bet;
                         }
                     } else {
-                        // if player hand value > dealer hand value, player hand wins
+                        // if player hand value > banker hand value, player hand wins
                         player.setBalance(bet * 2);
                         roundBalance += bet;
                     }
