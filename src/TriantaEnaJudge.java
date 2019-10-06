@@ -143,7 +143,6 @@ public class TriantaEnaJudge extends Judge<TriantaEnaPlayer, TriantaEnaPlayer> {
     public int checkWinner(TriantaEnaPlayer player, TriantaEnaPlayer banker) {
         TriantaEnaHand bankerHand = banker.getHand();
         int bankerValue = bankerHand.getTotalValue();
-
         int roundBalance = 0;
 
         if (isBust(bankerHand)) {
@@ -151,7 +150,6 @@ public class TriantaEnaJudge extends Judge<TriantaEnaPlayer, TriantaEnaPlayer> {
             for (int i = 0; i < player.getHandCount(); i++) {
                 TriantaEnaHand playerHand = player.getHandAt(i);
                 int bet = playerHand.getBet();
-
                 if (!isBust(playerHand)) {
                     // if not bust, player hand wins
                     player.setBalance(bet * 2);
@@ -196,7 +194,6 @@ public class TriantaEnaJudge extends Judge<TriantaEnaPlayer, TriantaEnaPlayer> {
                             // banker hand == blackjack && player hand == natural blackjack, player hand wins
                             // If the Player wins, they keep their bet and receive their bet * 2 from the Banker
                             player.setBalance(bet * 2);
-                            banker.setBalance(-bet);
                             roundBalance += bet;
                         } else {
                             // both blackjack or neither blackjack, nor natural blackjack, tie
