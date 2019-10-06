@@ -195,9 +195,10 @@ public class TriantaEnaGame extends Game implements PlayerAction {
 
                 logger.displayPlayerHand(hand);
 
-                if (judge.isTriantaEna(hand)) {
+                if (judge.isTriantaEna(hand) && !judge.isNaturalTriantaEna(hand)) {
                     logger.msg("Your current hand is a TriantaEna! Congrats!");
                 }
+
                 if (judge.isBust(hand)) {
                     int displayedIdx = i + 1;
                     logger.msg("Player " + player.getId() + " hand " + displayedIdx + " is Bust!");
@@ -279,7 +280,7 @@ public class TriantaEnaGame extends Game implements PlayerAction {
             logger.displayBankerHand(bankerHand);
         }
 
-        if (judge.isTriantaEna(bankerHand)) {
+        if (judge.isTriantaEna(bankerHand) && !judge.isNaturalTriantaEna(bankerHand)) {
             logger.msg("Your current hand is a TriantaEna! Congrats!");
         }
 
