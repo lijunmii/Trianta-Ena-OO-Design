@@ -126,14 +126,14 @@ public class TriantaEnaGame extends Game implements PlayerAction {
         int playerCountInput = -1;
         while (!isPlayerValid) {
             playerCountInput = getInteger(scanner.nextLine());
-            if (1 <= playerCountInput && playerCountInput <= MAX_PLAYER) {
+            if (2 <= playerCountInput && playerCountInput <= MAX_PLAYER) {
                 logger.msg("The game will have " + playerCountInput + " player(s) in the beginning.");
                 isPlayerValid = true;
             } else {
                 logger.displayInvalidMsgForRange(1, MAX_PLAYER);
             }
         }
-        this.playerCount = playerCountInput;
+        this.playerCount = playerCountInput - 1;
     }
 
 
@@ -193,7 +193,7 @@ public class TriantaEnaGame extends Game implements PlayerAction {
 
                     String next_action = getUserAction(player, hand);
                     playAction(player, next_action, hand);
-                    if (next_action.equals("stand") || next_action.equals("doubleUp")) {
+                    if (next_action.equals("stand")) {
                         break;
                     }
                 }
@@ -307,6 +307,8 @@ public class TriantaEnaGame extends Game implements PlayerAction {
             if (!judge.isFold(player.getHand())) {
                 int roundBalance = judge.checkWinner(player, banker);
                 logger.printPlayerBalance(player.getId(), roundBalance, player.getBalance(), getRound());
+            } else {
+                logger.msg("At round " + getRound() + ", Player " + player.getId() + " fold.");
             }
             if (player.getBalance() == 0) {
                 logger.playerLeaves(player);

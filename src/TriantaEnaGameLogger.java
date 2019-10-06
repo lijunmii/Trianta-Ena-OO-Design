@@ -30,7 +30,7 @@ public class TriantaEnaGameLogger extends GameLogger {
         msg("Please tell us how many players will join the game.");
         msg("We do not allow new players to join after the game starts.");
         msg("The max number of players allowed is " + max_player + ".");
-        msg("Please enter an integer between 1 and " + max_player + ": ");
+        msg("Please enter an integer between 2 and " + max_player + " (include banker): ");
     }
 
     public void displayInvalidMsgForRange(int min_number, int max_number) {
