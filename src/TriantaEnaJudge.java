@@ -148,6 +148,7 @@ public class TriantaEnaJudge extends Judge<TriantaEnaPlayer, TriantaEnaPlayer> {
                     // if not bust, player hand wins
                     player.setBalance(bet * 2);
                     roundBalance += playerHand.getBet();
+                    banker.setBalance(-bet);
                 } else {
                     // if this player hand bust, both player and banker lose, tie
                     // if tie, player loses, and banker get the bet
@@ -186,6 +187,7 @@ public class TriantaEnaJudge extends Judge<TriantaEnaPlayer, TriantaEnaPlayer> {
                             // If the Player wins, they keep their bet and receive their bet * 2 from the Banker
                             player.setBalance(bet * 2);
                             roundBalance += bet;
+                            banker.setBalance(-bet);
                         } else {
                             // both Trianta Ena or neither Trianta Ena, nor natural Trianta Ena, tie
                             // if tie, player loses
@@ -196,6 +198,7 @@ public class TriantaEnaJudge extends Judge<TriantaEnaPlayer, TriantaEnaPlayer> {
                         // if player hand value > banker hand value, player hand wins
                         player.setBalance(bet * 2);
                         roundBalance += bet;
+                        banker.setBalance(-bet);
                     }
                 }
             }

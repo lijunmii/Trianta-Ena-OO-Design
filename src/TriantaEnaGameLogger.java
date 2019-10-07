@@ -6,7 +6,6 @@ public class TriantaEnaGameLogger extends GameLogger {
 
     public void welcomeMsg() {
         msg("Welcome to our game!");
-        msg("Created by Jiatong Hao, Xiankang Wu and Lijun Chen on 10/05/2019.");
         msg("########\n");
     }
 
@@ -17,12 +16,12 @@ public class TriantaEnaGameLogger extends GameLogger {
     }
 
     public void displaySetBankerParam() {
-        msg("Please enter a number between 24 and 31 as banker's stopping value. ");
+        msg("Please enter a number between 24 and 29 as banker's stopping value. ");
         msg("All other inputs means using default parameter.");
     }
 
     public void displaySetBalanceParam() {
-        msg("Pleae enter a number larger than 1 as balance for each player.");
+        msg("Please enter a number larger than 1 as balance for each player.");
         msg("All other inputs means using default parameter.");
     }
 
@@ -52,9 +51,9 @@ public class TriantaEnaGameLogger extends GameLogger {
         msg("Banker's current hand has value: " + hand.getTotalValue() + "\n");
     }
 
-    public void displayPlayerHand(TriantaEnaHand hand) {
-        msg("Your current hand is: " + hand);
-        msg("Your current hand has value: " + hand.getTotalValue() + "\n");
+    public void displayPlayerHand(int playerId, TriantaEnaHand hand) {
+        msg("Player " + playerId + ", your current hand is: " + hand);
+        msg("Your current hand has value: " + hand.getTotalValue());
     }
 
 
@@ -77,8 +76,8 @@ public class TriantaEnaGameLogger extends GameLogger {
         msg("Player " + playerId + " current balance is $" + playerBalance);
     }
 
-    public void printBankerBalance(int playerId, int roundBalance, int roundNum) {
-            msg("At round " + roundNum + ", Banker " + playerId + " has balance $" + roundBalance + ".");
+    public void printBankerBalance(int playerId, int balance, int roundNum) {
+            msg("At round " + roundNum + ", Banker " + playerId + " has balance $" + balance + ".\n");
     }
 
     public void playerLeaves(TriantaEnaPlayer player) {
