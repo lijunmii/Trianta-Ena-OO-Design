@@ -15,8 +15,8 @@ import java.util.Scanner;
 public class TriantaEnaGame extends Game implements PlayerAction {
     private final int WIN_VAL = 31;
     private final int BANKER_VAL = 27;
-    private final int MIN_BANKER_VAL = 16;
-    private final int MAX_BANKER_VAL = 18;
+    private final int MIN_BANKER_VAL = 24;
+    private final int MAX_BANKER_VAL = 29;
     private final int MAX_PLAYER = 7;
     private final int BALANCE = 100;
     private final int INITIAL_CARD_NUM = 3;
@@ -58,7 +58,7 @@ public class TriantaEnaGame extends Game implements PlayerAction {
      * each player makes their move, banker plays, and the round is wrapped up.
      */
     public void playARound() {
-        logger.msg("\n*****************\nRound: " + getRound());
+        logger.msg("\n*****************\nRound: " + getRound() + "\n");
 
         // deal one initial card for all player and banker
         for (TriantaEnaPlayer player : playerList) {
@@ -71,7 +71,7 @@ public class TriantaEnaGame extends Game implements PlayerAction {
 
         // ask player to make bet or fold
         for (TriantaEnaPlayer player : playerList) {
-            logger.displayPlayerHand(player.getHand());
+            logger.displayPlayerHand(player.getId(), player.getHand());
             makeBet(player);
         }
 
@@ -133,16 +133,16 @@ public class TriantaEnaGame extends Game implements PlayerAction {
                 logger.displayInvalidMsgForRange(1, MAX_PLAYER);
             }
         }
-        this.playerCount = playerCountInput - 1;
+        this.playerCount = playerCountInput;
     }
 
 
     private void initGame() {
         deck = new TriantaEnaDeck();
         judge = new TriantaEnaJudge(bankerVal, winVal);
-        banker = new TriantaEnaPlayer(playerCount, balance);
+        banker = new TriantaEnaPlayer(playerCount, balance * 3);
         playerList = new ArrayList<>(playerCount);
-        for (int i = 0; i < playerCount; i++)
+        for (int i = 1; i < playerCount; i++)
             playerList.add(new TriantaEnaPlayer(i, balance));
     }
 
@@ -174,7 +174,7 @@ public class TriantaEnaGame extends Game implements PlayerAction {
 
                 if (judge.isFold(hand)) {
                     logger.msg("Player " + player.getId() + " has folded.");
-                    logger.displayPlayerHand(hand);
+                    logger.displayPlayerHand(player.getId(), hand);
                     logger.msg("Go to next player.");
                     continue;
                 }
@@ -183,13 +183,13 @@ public class TriantaEnaGame extends Game implements PlayerAction {
                 logger.displayBankerCard(banker.getVisibleCard());
 
                 if (judge.isNaturalTriantaEna(hand)) {
-                    logger.displayPlayerHand(hand);
+                    logger.displayPlayerHand(player.getId(), hand);
                     logger.msg("Your current hand is a Natural Trianta Ena! Gorgeous!!!");
                     continue;
                 }
 
                 while (!judge.isBust(hand) && !judge.isTriantaEna(hand)) {
-                    logger.displayPlayerHand(hand);
+                    logger.displayPlayerHand(player.getId(), hand);
 
                     String next_action = getUserAction(player, hand);
                     playAction(player, next_action, hand);
@@ -198,7 +198,7 @@ public class TriantaEnaGame extends Game implements PlayerAction {
                     }
                 }
 
-                logger.displayPlayerHand(hand);
+                logger.displayPlayerHand(player.getId(), hand);
 
                 if (judge.isTriantaEna(hand) && !judge.isNaturalTriantaEna(hand)) {
                     logger.msg("Your current hand is a TriantaEna! Congrats!");
@@ -276,7 +276,7 @@ public class TriantaEnaGame extends Game implements PlayerAction {
         logger.displayBankerHand(bankerHand);
 
         if (judge.isNaturalTriantaEna(bankerHand)) {
-            logger.msg("Banker's current hand is a Natural TriantaEna! Gorgeous!!!");
+            logger.msg("Banker's current hand is a Natural Trianta Ena! Gorgeous!!!");
         }
 
         while (judge.canBankerHit(banker)) {
@@ -286,7 +286,7 @@ public class TriantaEnaGame extends Game implements PlayerAction {
         }
 
         if (judge.isTriantaEna(bankerHand) && !judge.isNaturalTriantaEna(bankerHand)) {
-            logger.msg("Your current hand is a TriantaEna! Congrats!");
+            logger.msg("Your current hand is a Trianta Ena! Congrats!");
         }
 
         if (judge.isBust(bankerHand)) {
@@ -302,13 +302,13 @@ public class TriantaEnaGame extends Game implements PlayerAction {
      */
     private void calcRoundResult() {
         List<TriantaEnaPlayer> toRemove = new ArrayList<>();
-        logger.printBankerBalance(banker.getId(), banker.getBalance(), getRound());
         for (TriantaEnaPlayer player : playerList) {
             if (!judge.isFold(player.getHand())) {
                 int roundBalance = judge.checkWinner(player, banker);
                 logger.printPlayerBalance(player.getId(), roundBalance, player.getBalance(), getRound());
             } else {
-                logger.msg("At round " + getRound() + ", Player " + player.getId() + " fold.");
+                logger.msg("At round " + getRound() + ", Player " + player.getId() + " chose to fold.");
+                logger.msg("Player" + player.getId() + " has balance " + player.getBalance());
             }
             if (player.getBalance() == 0) {
                 logger.playerLeaves(player);
@@ -318,6 +318,7 @@ public class TriantaEnaGame extends Game implements PlayerAction {
                 toRemove.add(player);
             }
         }
+        logger.printBankerBalance(banker.getId(), banker.getBalance(), getRound());
         for (TriantaEnaPlayer player : toRemove) {
             playerList.remove(player);
         }
@@ -328,7 +329,33 @@ public class TriantaEnaGame extends Game implements PlayerAction {
      * If they decline, the player with the next greatest amount is given the same option.
      */
     private void rotatePlayer() {
-        Scanner sc = new Scanner(System.in);
+        // if banker has no balance, rotate banker, remove the previous banker from the game
+        if (banker.getBalance() <= 0) {
+            logger.msg("Banker " + banker.getId() + " has no balance and leaves the game.\n");
+            // if only one player left, game ends
+            if (playerList.size() <= 1) {
+                logger.msg("Only one player left.");
+                playerList.clear();
+                return;
+            }
+            // otherwise, choose the player with the highest balance as banker
+            TreeMap<Integer, Integer> sortedBalanceMap = new TreeMap<>(Collections.reverseOrder());
+            // TreeMap sort the keys in descending order. Key is the playerBalance, and the value is the playerID
+            for (TriantaEnaPlayer player : playerList) {
+                sortedBalanceMap.put(player.getBalance(), player.getId());
+            }
+            int highestPlayerId = sortedBalanceMap.firstEntry().getValue();
+            for (TriantaEnaPlayer player : playerList) {
+                if (player.getId() == highestPlayerId) {
+                    banker = player;
+                    playerList.remove(player);
+                    logger.msg("Player " + highestPlayerId + " has the highest balance and is now the new Banker!\n");
+                    return;
+                }
+            }
+        }
+
+        // if banker stays, check if any player is eligible and willing to be the new banker
         TreeMap<Integer, Integer> sortedBalanceMap = new TreeMap<>(Collections.reverseOrder());
         int count = 0;
 
@@ -338,11 +365,16 @@ public class TriantaEnaGame extends Game implements PlayerAction {
         }
 
         for (Map.Entry<Integer, Integer> entry : sortedBalanceMap.entrySet()) {
+            Scanner sc = new Scanner(System.in);
             Integer balance = entry.getKey();
             Integer playerID = entry.getValue();
             if (++count == 1 && balance <= banker.getBalance()) {
-                logger.msg("Current balance of banker " + banker.getId() + " is: " + banker.getBalance());
-                logger.msg("This round, no one is eligible to become the new Banker.");
+                // logger.msg("Current balance of banker " + banker.getId() + " is: " + banker.getBalance());
+                logger.msg("No one is eligible to become the new Banker.");
+                return;
+            }
+            if (balance <= banker.getBalance()) {
+                logger.msg("Banker remains the same");
                 return;
             }
             logger.msg("Player " + playerID + ", your current balance = $" + balance +
@@ -351,10 +383,10 @@ public class TriantaEnaGame extends Game implements PlayerAction {
                     "Enter other inputs to decline.");
             String choice = sc.nextLine();
             if (!choice.equals("y") && !choice.equals("Y")) {
-                logger.msg("Player " + playerID + "did not become the Banker.\n");
+                logger.msg("Player " + playerID + " did not become the Banker.\n");
             } else {
                 logger.msg("Player " + playerID + " is now the new Banker!\n");
-                logger.msg("Banker " + banker.getId() + " now is Player " + banker.getId() + "!\n");
+                logger.msg("Banker " + banker.getId() + " now becomes Player " + banker.getId() + "!\n");
                 playerList.add(banker);
                 for (TriantaEnaPlayer player : playerList) {
                     if (player.getId() == playerID) {
